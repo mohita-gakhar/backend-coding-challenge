@@ -38,8 +38,8 @@ class ProductsControllerTest {
     public void shouldListProductsWithCurrencyCodeEURWhenCountryCodeNonSupported() throws Exception {
         mockMvc.perform(get("/products?countryCode=JP"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", IsEqual.equalTo(4)));
-//                .andExpect(jsonPath("$[*].currencyCode", IsNot.not(IsEmptyCollection.empty())))
-//                .andExpect(jsonPath("$[0].currencyCode", IsEqual.equalTo("EUR")));
+                .andExpect(jsonPath("$.length()", IsEqual.equalTo(4)))
+                .andExpect(jsonPath("$[*].currencyCode", IsNot.not(IsEmptyCollection.empty())))
+                .andExpect(jsonPath("$[0].currencyCode", IsEqual.equalTo("EUR")));
     }
 }

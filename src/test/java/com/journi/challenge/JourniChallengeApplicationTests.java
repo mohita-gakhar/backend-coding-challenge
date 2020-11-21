@@ -8,6 +8,7 @@ class JourniChallengeApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }

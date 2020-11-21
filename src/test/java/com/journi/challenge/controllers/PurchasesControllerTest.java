@@ -1,6 +1,7 @@
 package com.journi.challenge.controllers;
 
 import com.journi.challenge.models.Purchase;
+import com.journi.challenge.models.PurchaseRequest;
 import com.journi.challenge.models.PurchaseStats;
 import com.journi.challenge.repositories.PurchasesRepository;
 import org.junit.jupiter.api.Test;
@@ -53,35 +54,37 @@ class PurchasesControllerTest {
     @Test
     public void testPurchaseStatistics() {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime firstDate = now.minusDays(20);
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE.withZone(ZoneId.of("UTC"));
-        // Inside window purchases
-        purchasesRepository.save(new Purchase("1", firstDate, Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", firstDate.plusDays(1), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", firstDate.plusDays(2), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", firstDate.plusDays(3), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", firstDate.plusDays(4), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", firstDate.plusDays(5), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", firstDate.plusDays(6), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", firstDate.plusDays(7), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", firstDate.plusDays(8), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", firstDate.plusDays(9), Collections.emptyList(), "", 10.0));
+        LocalDateTime firstDate = now.plusDays(20);
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("UTC"));
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ISO_DATE.withZone(ZoneId.of("UTC"));
 
         // Outside window purchases
-        purchasesRepository.save(new Purchase("1", now.minusDays(31), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", now.minusDays(31), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", now.minusDays(32), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", now.minusDays(33), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", now.minusDays(34), Collections.emptyList(), "", 10.0));
-        purchasesRepository.save(new Purchase("1", now.minusDays(35), Collections.emptyList(), "", 10.0));
+        purchasesController.save(new PurchaseRequest("1", "ABC", now.minusDays(35).format(formatter), Collections.emptyList(), 10d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", now.minusDays(34).format(formatter), Collections.emptyList(), 10d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", now.minusDays(33).format(formatter), Collections.emptyList(), 10d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", now.minusDays(32).format(formatter), Collections.emptyList(), 10d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", now.minusDays(32).format(formatter), Collections.emptyList(), 10d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", now.minusDays(31).format(formatter), Collections.emptyList(), 10d, "EUR"));
+
+        // Inside window purchases
+        purchasesController.save(new PurchaseRequest("1", "ABC", firstDate.format(formatter), Collections.emptyList(), 10d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", firstDate.plusDays(1).format(formatter), Collections.emptyList(), 10d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", firstDate.plusDays(2).format(formatter), Collections.emptyList(), 100d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", firstDate.plusDays(3).format(formatter), Collections.emptyList(), 20d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", firstDate.plusDays(4).format(formatter), Collections.emptyList(), 30d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", firstDate.plusDays(5).format(formatter), Collections.emptyList(), 50d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", firstDate.plusDays(6).format(formatter), Collections.emptyList(), 40d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", firstDate.plusDays(7).format(formatter), Collections.emptyList(), 70d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", firstDate.plusDays(8).format(formatter), Collections.emptyList(), 80d, "EUR"));
+        purchasesController.save(new PurchaseRequest("1", "ABC", firstDate.plusDays(9).format(formatter), Collections.emptyList(), 90d, "EUR"));
 
         PurchaseStats purchaseStats = purchasesController.getStats();
-        assertEquals(formatter.format(firstDate), purchaseStats.getFrom());
-        assertEquals(formatter.format(firstDate.plusDays(9)), purchaseStats.getTo());
         assertEquals(10, purchaseStats.getCountPurchases());
-        assertEquals(100.0, purchaseStats.getTotalAmount());
-        assertEquals(10.0, purchaseStats.getAvgAmount());
+        assertEquals(500.0, purchaseStats.getTotalAmount());
+        assertEquals(50.0, purchaseStats.getAvgAmount());
         assertEquals(10.0, purchaseStats.getMinAmount());
-        assertEquals(10.0, purchaseStats.getMaxAmount());
+        assertEquals(100.0, purchaseStats.getMaxAmount());
+        assertEquals(outputFormatter.format(firstDate), purchaseStats.getFrom());
+        assertEquals(outputFormatter.format(firstDate.plusDays(9)), purchaseStats.getTo());
     }
 }

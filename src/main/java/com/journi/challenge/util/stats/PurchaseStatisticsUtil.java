@@ -48,7 +48,7 @@ public class PurchaseStatisticsUtil {
 
     private static void updateAllPurchases(Purchase purchase) {
         while(!allPurchases.isEmpty()) {
-            Duration duration = Duration.between(allPurchases.getFirst().getTimestamp(), purchase.getTimestamp());
+            Duration duration = Duration.between(allPurchases.peekFirst().getTimestamp(), purchase.getTimestamp());
             if(duration.toDays() <= 30) {
                 break;
             }else {
