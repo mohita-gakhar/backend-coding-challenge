@@ -1,8 +1,6 @@
 package com.journi.challenge.models;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -21,7 +19,8 @@ public class Purchase {
     private final String customerName;
     private final Double totalValue;
 
-    public Purchase(String invoiceNumber, LocalDateTime timestamp, List<String> productIds, String customerName, Double totalValue) {
+    public Purchase(String invoiceNumber, LocalDateTime timestamp, List<String> productIds, String customerName,
+                    Double totalValue) {
         this.invoiceNumber = invoiceNumber;
         this.timestamp = timestamp;
         this.productIds = productIds;
